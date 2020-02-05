@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+    redis:
+        image: redis:alpine
+        restart: always
+        container_name: redis
+        volumes:
+            - $PWD/data:/data
+        networks:
+            default:
+                aliases:
+                    - redis.app # custom alias to connect from other containers running on same docker network.
+        command: --appendonly yes
+    app:
+        build:
+            context: .
+        image: maannniii/counter # Nme of the docker image change it if needed.
+        restart: always
+        container_name: app
+        depends_on:
+            - redis
+        environment:
+            - DEMO_REDIS_ADDR=redis.app:6379 # use docker's service discovery to access redis.
+            - DEMO_APP_ADDR=80 # port on which go app is to be run
+        networks:
+            default:
+        ports:
+            - 8000:80 # update port as per DEMO_APP_ADDR env variable
+
