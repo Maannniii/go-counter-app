@@ -1,0 +1,29 @@
+# tasks file for vagrant
+- name: Set System Host Name
+  hostname:
+    name: "{{host_name}}"
+  tags:
+    - set_host_name
+
+- name: Add user
+  user:
+    name: "{{username}}"
+    comment: "{{username}}"
+  tags:
+    - create_user
+
+- sysctl:
+    name: "{{item.key}}"
+    value: "{{item.value}}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop: "{{ sysctloptions|dict2items }}"
+  tags:
+    - sysctl_config
+
+- name: "Set timezone to {{tz}}"
+  timezone:
+    name: "{{tz}}"
+  tags:
+    - timezone

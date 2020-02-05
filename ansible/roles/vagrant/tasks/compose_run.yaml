@@ -1,0 +1,14 @@
+- name: Copy docker-compose file
+  copy:
+    src: ../../../../goapp/docker-compose.yml
+    dest: /etc/demo-ops/
+    mode: '0644'
+  tags:
+    - copy_compose
+
+- name: Run docker container using docker-compose
+  docker_compose:
+    project_src: /etc/demo-ops/
+    pull: true
+  tags:
+    - run_compose

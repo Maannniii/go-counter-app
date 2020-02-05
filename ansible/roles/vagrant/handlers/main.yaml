@@ -1,0 +1,7 @@
+---
+# handlers file for vagrant
+- name: Restart docker
+  systemd:
+    name: docker
+    state: restarted
+

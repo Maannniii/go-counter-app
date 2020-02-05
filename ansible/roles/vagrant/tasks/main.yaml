@@ -1,0 +1,8 @@
+- name: Run initial configs
+  include_tasks: ./init.yaml
+
+- name: Install,configure Docker
+  include_tasks: ./docker_install_setup.yaml
+
+- name: Run docker comtainer using docker-compose
+  include_tasks: ./compose_run.yaml

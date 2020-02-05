@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: true
+  roles:
+    - vagrant
+  handlers:
+    - include: roles/vagrant/handlers/main.yaml
+  become: yes
+  become_method: sudo
