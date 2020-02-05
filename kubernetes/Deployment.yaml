@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    tier: backend
+    service: app
+  namespace: demo-ops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: app
+  template:
+    metadata:
+      labels:
+        service: app
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: app
+        image: maannniii/counter
+        ports:
+        - containerPort: 8000
+
+        volumeMounts:
+        - name: tz-config
+          mountPath: /etc/localtime
+        - name: tz-config
+          mountPath: /etc/timezone
+
+        env:
+        - name: DEMO_APP_ADDR
+          value: ":8080"
+        - name: DEMO_REDIS_ADDR
+          value: "redis.demo-ops.svc.cluster.local:6379"
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 3
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 1
+
+        resources:
+          requests: # start config
+            memory: "64Mi"
+            cpu: "250m" # 25% of cpu
+          limits: # maximum resources allowed.
+            memory: "128Mi"
+            cpu: "500m"
+
+      volumes:
+      - name: tz-config
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Kolkata
+
